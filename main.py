@@ -46,10 +46,30 @@ def get_transcript(url):
 
     return transcript
 
+def process(transcript):
+    # Initialize an empty string to accumulate processed text
+    txt = ""
+
+    # Iterate over each segment in the transcript
+    for i in transcript:
+        try:
+            # Format the text and start time, then add to the accumulated string
+            txt += f"Text: {i['text']} Start: {i['start']}\n"
+        except:
+            # If an error occurs (e.g., missing keys), skip the entry
+            pass
+
+    # Return the processed text
+    return txt
+
 
 # Retrieve the transcript for the specified YouTube video URL
 transcript = get_transcript("https://www.youtube.com/watch?v=kEOCrtkLvEo&t=24s")
 
 # Display the first 10 entries of the transcript
 # Each entry is a dictionary containing 'text', 'start', and 'duration'
-print(transcript[:10])
+# print(transcript[:10])
+
+processed_transcript = process(transcript)
+res = processed_transcript[:100] # Display the first 100 characters of the processed transcript
+print(res)
