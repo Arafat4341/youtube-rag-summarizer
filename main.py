@@ -71,5 +71,17 @@ transcript = get_transcript("https://www.youtube.com/watch?v=kEOCrtkLvEo&t=24s")
 # print(transcript[:10])
 
 processed_transcript = process(transcript)
-res = processed_transcript[:100] # Display the first 100 characters of the processed transcript
+# res = processed_transcript[:100] # Display the first 100 characters of the processed transcript
+# print(res)
+
+# Indexing starts
+# chunking the transcription
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=200,  # Maximum chunk size of 200 characters
+    chunk_overlap=20  # Overlap of 20 characters between chunks
+)
+
+chunks = text_splitter.split_text(processed_transcript)
+res = chunks[:10]  # Display the first 10 chunks
 print(res)
