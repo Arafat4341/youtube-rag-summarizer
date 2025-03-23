@@ -14,3 +14,42 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 import re
 
+
+def get_video_id(url):    
+    # Define a regular expression pattern to match YouTube video URLs
+    # The pattern captures 11 alphanumeric characters (plus hyphen or underscore) after '?v='
+    pattern = r'https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})'
+    
+    # Search the provided URL for the pattern
+    match = re.search(pattern, url)
+    
+    # If a match is found, return the captured video ID group
+    # Otherwise, return None
+    return match.group(1) if match else None
+
+
+def get_transcript(url):
+    video_id = get_video_id(url)
+    # Fetches the list of available transcripts for the given YouTube video
+    srt = YouTubeTranscriptApi.list_transcripts(video_id)
+
+    transcript = ""
+    for i in srt:
+        # Check if the transcript is auto-generated
+        if i.is_generated:
+            # If no transcript has been set yet, use the auto-generated one
+            if len(transcript) == 0:
+                transcript = i.fetch()
+        else:
+            # If a manually created transcript is found, use it (overrides auto-generated)
+            transcript = i.fetch()
+
+    return transcript
+
+
+# Retrieve the transcript for the specified YouTube video URL
+transcript = get_transcript("https://www.youtube.com/watch?v=kEOCrtkLvEo&t=24s")
+
+# Display the first 10 entries of the transcript
+# Each entry is a dictionary containing 'text', 'start', and 'duration'
+print(transcript[:10])
