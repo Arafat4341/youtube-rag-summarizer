@@ -124,3 +124,22 @@ parameters = {
     # In this case, generation will stop when encountering two consecutive newlines
     GenParams.STOP_SEQUENCES: ["\n\n"],
 }
+
+# Initializing watsonx LLM
+watsonx_granite = WatsonxLLM(
+    # Specifies the ID of the model to be used
+    # This is likely an enum or constant value defining a specific model
+    model_id=model_id,
+    
+    # The URL endpoint for the Watson service
+    # This is retrieved from a credentials dictionary
+    url=credentials.get("url"),
+    
+    # The ID of the project in which this LLM instance will operate
+    # This helps in organizing and managing different LLM instances
+    project_id=project_id,
+    
+    # A dictionary of parameters that configure the behavior of the LLM
+    # This includes settings like decoding method, token limits, and stop sequences
+    params=parameters
+)
