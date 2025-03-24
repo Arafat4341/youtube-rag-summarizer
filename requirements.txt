@@ -4,3 +4,4 @@ langchain==0.2.6
 langchain-community==0.2.6
 ibm-watsonx-ai==1.0.10
 langchain_ibm==0.1.8
+dotenv
