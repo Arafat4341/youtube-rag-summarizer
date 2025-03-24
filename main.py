@@ -161,4 +161,15 @@ embeddings = WatsonxEmbeddings(
 # (from_texts first does the embedding, and then stores them in FAISS index)
 faiss_index = FAISS.from_texts(chunks, embeddings)
 
+# perform simillarity search
+# Define the query string we want to search for
+query = "Which company they were talking about?"
 
+# Perform a similarity search on the FAISS index
+# The search returns the 'k' most similar chunks to the query
+# In this case, k=3, so it returns the top 3 most similar results
+results = faiss_index.similarity_search(query, k=3)
+
+# Iterate through the results and print each one
+for result in results:
+    print(result)
