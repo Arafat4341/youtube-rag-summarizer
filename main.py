@@ -90,7 +90,8 @@ print(res)
 
 # setting up watsonx model
 
-load_dotenv(os.path.join(os.path.dirname(__file__), '../config/.env'))
+# load_dotenv('config/.env')
+load_dotenv(os.path.join(os.path.dirname(__file__), 'conf/.env'))
 
 # Define the model ID for the Granite 8B Instruct Generation 3 model
 model_id = "ibm/granite-3-8b-instruct"
@@ -98,12 +99,12 @@ model_id = "ibm/granite-3-8b-instruct"
 # Set up the credentials needed to access the IBM Watson services
 credentials = Credentials(
     url=os.getenv("IBM_URL"),
+    api_key=os.getenv("IBM_API_KEY")
+    # url='https://jp-tok.ml.cloud.ibm.com',
 )
 
 # Initialize the API client with the given credentials
 client = APIClient(credentials)
-
-# Define the project ID for organizing tasks within IBM Watson services
 project_id = os.getenv("IBM_PROJECT_ID")
 
 # Defining Parameters for watsonx Model
@@ -127,19 +128,37 @@ parameters = {
 
 # Initializing watsonx LLM
 watsonx_granite = WatsonxLLM(
-    # Specifies the ID of the model to be used
-    # This is likely an enum or constant value defining a specific model
     model_id=model_id,
-    
-    # The URL endpoint for the Watson service
-    # This is retrieved from a credentials dictionary
     url=credentials.get("url"),
-    
-    # The ID of the project in which this LLM instance will operate
-    # This helps in organizing and managing different LLM instances
+    apikey=credentials.get("api_key"),
     project_id=project_id,
-    
-    # A dictionary of parameters that configure the behavior of the LLM
-    # This includes settings like decoding method, token limits, and stop sequences
     params=parameters
 )
+
+# initializing embedding model
+# Fetch specifications for available embedding models from the Watson service
+get_embedding_model_specs(credentials.get('url'))
+
+# Part 1: Create Embedding Model
+# Set up the WatsonxEmbeddings object
+embeddings = WatsonxEmbeddings(
+    # Specifies the ID of the embedding model to be used
+    # In this case, it's using the IBM SLATE 30M English model
+    model_id=EmbeddingTypes.IBM_SLATE_30M_ENG.value,
+    
+    # The URL endpoint for the Watson service
+    # This is retrieved from the credentials dictionary
+    url=credentials["url"],
+    apikey=credentials["api_key"],
+    
+    # The ID of the project in which this embedding model will operate
+    # This helps in organizing and managing different model instances
+    project_id=project_id
+)
+
+# Implementing FAISS for Similarity Search
+# INDEXING - embedding and storing
+# (from_texts first does the embedding, and then stores them in FAISS index)
+faiss_index = FAISS.from_texts(chunks, embeddings)
+
+
