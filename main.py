@@ -13,6 +13,8 @@ from langchain_community.vectorstores import FAISS
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 import re
+from dotenv import load_dotenv
+import os
 
 
 def get_video_id(url):    
@@ -85,3 +87,40 @@ text_splitter = RecursiveCharacterTextSplitter(
 chunks = text_splitter.split_text(processed_transcript)
 res = chunks[:10]  # Display the first 10 chunks
 print(res)
+
+# setting up watsonx model
+
+load_dotenv(os.path.join(os.path.dirname(__file__), '../config/.env'))
+
+# Define the model ID for the Granite 8B Instruct Generation 3 model
+model_id = "ibm/granite-3-8b-instruct"
+
+# Set up the credentials needed to access the IBM Watson services
+credentials = Credentials(
+    url=os.getenv("IBM_URL"),
+)
+
+# Initialize the API client with the given credentials
+client = APIClient(credentials)
+
+# Define the project ID for organizing tasks within IBM Watson services
+project_id = os.getenv("IBM_PROJECT_ID")
+
+# Defining Parameters for watsonx Model
+parameters = {
+    # Specifies the decoding method as greedy decoding
+    # This means the model always chooses the most probable next token
+    GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
+    
+    # Sets the minimum number of new tokens to generate to 1
+    # The model will always produce at least this many tokens
+    GenParams.MIN_NEW_TOKENS: 1,
+    
+    # Sets the maximum number of new tokens to generate to 500
+    # The model will stop generating after reaching this limit
+    GenParams.MAX_NEW_TOKENS: 500,
+    
+    # Defines sequences that will cause the generation to stop
+    # In this case, generation will stop when encountering two consecutive newlines
+    GenParams.STOP_SEQUENCES: ["\n\n"],
+}
