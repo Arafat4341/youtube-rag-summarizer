@@ -173,3 +173,20 @@ results = faiss_index.similarity_search(query, k=3)
 # Iterate through the results and print each one
 for result in results:
     print(result)
+
+
+# Summarizing the Transcript with LLMChain
+# defining promt template
+prompt = PromptTemplate(
+    # Specify the input variables that will be used in the template
+    input_variables=["transcript"],
+    
+    # Define the actual template string
+    template="""
+        Summarize the following YouTube video transcript in terms of paragraph:
+
+        {transcript}
+
+        Your summary should have concise summary in terms of paragraph. Ignore any timestamps.
+    """
+)
