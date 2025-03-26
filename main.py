@@ -85,8 +85,8 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 chunks = text_splitter.split_text(processed_transcript)
-res = chunks[:10]  # Display the first 10 chunks
-print(res)
+# res = chunks[:10]  # Display the first 10 chunks
+# print(res)
 
 # setting up watsonx model
 
@@ -190,3 +190,16 @@ prompt = PromptTemplate(
         Your summary should have concise summary in terms of paragraph. Ignore any timestamps.
     """
 )
+
+# Instantiate LLMChain with the refined prompt and LLM
+summarise_chain = LLMChain(
+    llm=watsonx_granite,  # The language model to be used (in this case, watsonx_granite)
+    prompt=prompt,        # The PromptTemplate we defined earlier
+    verbose=True          # Enable verbose mode for detailed output
+)
+
+# Pass the processed transcript to the LLMChain for summarization
+summary = summarise_chain.predict(transcript=processed_transcript)
+
+# Print the generated summary
+print(summary)
